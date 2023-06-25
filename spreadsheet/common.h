@@ -7,7 +7,9 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include <map>
 
+ using namespace std::string_literals;
 // Позиция ячейки. Индексация с нуля.
 struct Position {
     int row = 0;
@@ -36,6 +38,7 @@ struct Size {
 // Описывает ошибки, которые могут возникнуть при вычислении формулы.
 class FormulaError {
 public:
+
     enum class Category {
         Ref,    // ссылка на ячейку с некорректной позицией
         Value,  // ячейка не может быть трактована как число
@@ -51,7 +54,10 @@ public:
     std::string_view ToString() const;
 
 private:
-    Category category_;
+    std::map<Category, std::string> category_string_ = {{Category::Ref, "#DIV/0!"s},
+                                                        {Category::Value, "#VALUE!"s},
+                                                        {Category::Div0, "#DIV/0!"s}};
+    Category category_ = Category::Div0;
 };
 
 std::ostream& operator<<(std::ostream& output, FormulaError fe);
